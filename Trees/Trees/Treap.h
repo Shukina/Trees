@@ -13,10 +13,12 @@ struct TreapNode
 	TreapNode *left;
 	TreapNode *right;
 	
-	TreapNode(Key key, int value)
+	TreapNode(Record w)
 	{
-		x.SetKey(key);
-		x.SetValue(value);
+		x.SetKey(w.GetKey());
+		x.SetValue(w.GetValue());
+		unsigned rand_value = 11;
+		srand(rand_value);
 		depth = rand() % 10;
 		left = NULL;
 		right = NULL;
@@ -39,23 +41,28 @@ public:
 		return root;
 	}
 
-	TreapNode *merge(TreapNode *a, TreapNode *b) 
+	TreapNode *merge(TreapNode *l, TreapNode *r) 
 	{
-		if (!a || !b)
+		if (!l || !r)
 		{
-			if (a)
-				return a;
-			else if (b)
-				return b;
+			if (l)
+				return l;
+			else if (r)
+				return r;
 		}
-		if (a->depth > b->depth) 
+		if (l->x.GetKey() == r->x.GetKey())
 		{
-			a->right = merge(a->right, b);
-			return a;
+			l->x.SetValue(l->x.GetValue() + 1);
+			return l;
+		}
+		if (l->depth >= r->depth) 
+		{
+			l->right = merge(l->right, r);
+			return l;
 		}
 		else {
-			b->left = merge(a, b->left);
-			return b;
+			r->left = merge(l, r->left);
+			return r;
 		}
 	}
 
@@ -74,37 +81,73 @@ public:
 		return Search(r->right, key);
 	}
 
-	void split(TreapNode *t, Key k, TreapNode *&a, TreapNode *&b) 
+	void split(TreapNode *t, Key k, TreapNode *&l, TreapNode *&r) //разделяет дерево T на два дерева L и R
 	{
 		if (!t)
-			a = b = NULL;
-		else if (t->x.GetKey() < k) 
+			l = r = NULL;
+		else if (t->x.GetKey() <= k) 
 		{
-			split(t->right, k, t->right, b);
-			a = t;
+			split(t->right, k, t->right, r);
+		l = t;
 		}
 		else {
-			split(t->left, k, a, t->left);
-			b = t;
+			split(t->left, k, l, t->left);
+			r = t;
 		}
 	}
 
-	void insert(Record w) 
+	void insert(TreapNode *t, TreapNode*tn) 
 	{
-		TreapNode *tn = new TreapNode(w.GetKey(), w.GetValue());
+		if (!root)
+		{
+			root = tn;
+			return;
+		}
+		/*TreapNode *tn = new TreapNode(w.GetKey(), w.GetValue());*/
+		//TreapNode *t1, *t2;
+		///*TreapNode *t = this->GetRoot();*/
+		//split(t, tn->x.GetKey(), t1, t2);
+		//t = merge(t1, tn);
+		//t = merge(t, t2);
+		//
+		if (!t)
+			t = tn;
+		else if (tn->x.GetKey() > t->x.GetKey())
+		{
+			split(t, tn->x.GetKey(), tn->left, tn->right);
+			t = tn;
+		}
+		else
+		{
+			insert(tn->x.GetKey() < t->x.GetKey() ? t->left : t->right, tn);
+		}
+	}
+
+	void insert(Record tn)
+	{
+		if (!root)
+		{
+			root = new TreapNode(tn);
+			//root = tn;
+			return;
+		}
+		/*TreapNode *tn = new TreapNode(w.GetKey(), w.GetValue());*/
 		TreapNode *t1, *t2;
-		TreapNode *t = this->GetRoot();
-		split(t, w.GetKey(), t1, t2);
-		t = merge(t1, tn);
-		t = merge(t, t2);
+		
+		split(root, tn.GetKey(), t1, t2);
+
+		root = merge(t1, new TreapNode(tn));
+		root = merge(root, t2);
+		
+		
 	}
 
 	void remove(Key key) //удаление всех элементов с ключом key
 	{
 		TreapNode *t1, *t2, *t3;
 		TreapNode *t = this->GetRoot();
-		split(t, key, t1, t2);
-		split(t2, key + 1, t2, t3);
+		split(t, key-1, t1, t2);
+		split(t2, key , t2, t3);
 		t = merge(t1, t3);
 		dispose(t2);
 	}
@@ -118,15 +161,23 @@ public:
 		delete n;
 	}
 
-	void Show(TreapNode *node)//вывод в порядке возрастания
+	
+
+	
+	
+
+	// Делает обход дерева слева-направо и печатает в консоль тройки (ключ узла, приоритет, глубина узла).
+	void Show(TreapNode* node, int currentLevel)
 	{
-		if (node == NULL)
-		{
+		if (node == 0) {
 			return;
 		}
-		Show(node->left);
-		cout << node->x << endl;
-		Show(node->right);
+
+		Show(node->left, currentLevel + 1);
+
+		cout << "(" << node->x.GetKey() << " " << node->x.GetValue() <<  ") ";
+
+		Show(node->right, currentLevel + 1);
 	}
 };
 

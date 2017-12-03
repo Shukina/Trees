@@ -156,5 +156,60 @@ public:
 			FindMax(node->right, l);
 		}
 	}*/
+
+
+	AVLNode* findmin(AVLNode* p) // поиск узла с минимальным ключом в дереве p 
+	{
+		return p->left ? findmin(p->left) : p;
+	}
+
+	AVLNode* removemin(AVLNode* p) // удаление узла с минимальным ключом из дерева p
+	{
+		if (p->left == 0)
+			return p->right;
+		p->left = removemin(p->left);
+		return Balance(p);
+	}
+
+	AVLNode* remove(AVLNode* p, int k) // удаление ключа k из дерева p
+	{
+		if (!p) return 0;
+		if (k < p->x.GetKey() )
+			p->left = remove(p->left, k);
+		else if (k > p->x.GetKey())
+			p->right = remove(p->right, k);
+		else //  k == p->key 
+		{
+			AVLNode* q = p->left;
+			AVLNode* r = p->right;
+			delete p;
+			if (!r) return q;
+			AVLNode* min = findmin(r);
+			min->right = removemin(r);
+			min->left = q;
+			return Balance(min);
+		}
+
+		return Balance(p);
+	}
+
+	//Search??? что возвращать
+	AVLNode* Search(AVLNode* p, int k)
+	{
+		if (!p)
+		{
+			cout << "Нет узла с таким значением ключа" << endl;
+			return 0;
+		}
+		if (k < p->x.GetKey())
+			p->left = Search(p->left, k);
+		else if (k > p->x.GetKey())
+			p->right = Search(p->right, k);
+		else //  k == p->key 
+		{
+			cout << "Количество повторений данного ключа "<<k<<" = "<<p->x.GetValue() << endl;
+		}
+	}
+
 };
 #endif

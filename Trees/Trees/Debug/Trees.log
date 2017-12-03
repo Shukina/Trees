@@ -1,3 +1,4 @@
 ﻿  main.cpp
-  Trees.vcxproj -> C:\Users\Аня\Documents\Visual Studio 2015\Projects\Trees\Debug\Trees.exe
-  Trees.vcxproj -> C:\Users\Аня\Documents\Visual Studio 2015\Projects\Trees\Debug\Trees.pdb (Full PDB)
+c:\users\аня\documents\visual studio 2015\projects\trees\trees\trees\avltree.h(212): warning C4715: AVL::Search: значение возвращается не при всех путях выполнения
+  Trees.vcxproj -> C:\Users\Аня\Documents\Visual Studio 2015\Projects\Trees\Trees\Debug\Trees.exe
+  Trees.vcxproj -> C:\Users\Аня\Documents\Visual Studio 2015\Projects\Trees\Trees\Debug\Trees.pdb (Full PDB)
